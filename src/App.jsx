@@ -68,6 +68,15 @@ const App = () => {
     );
   }
 
+  if (hasClaimedNFT) {
+    return (
+      <div className="member-page">
+        <h1>SimsDAO Member Page</h1>
+        <p>Congratulations on being a member</p>
+      </div>
+    );
+  };
+
   const mintNft = () => {
     setIsClaiming(true);
     // Call bundleDropModule.claim("0", 1) to mint nft to user's wallet.
