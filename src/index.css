@@ -1,7 +1,12 @@
+@font-face {
+    font-family: simsLLHP;
+    src: url(SimsLLHP.ttf);
+}
+
 html,
 body {
   margin: 0;
-  font-family: Inter, sans-serif;
+  font-family:  Inter, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-image: url("https://wallpapercave.com/wp/wp1826906.jpg");
@@ -15,6 +20,7 @@ body {
 
 h1 {
   font-size: 5rem;
+  font-family: simsLLHP, sans-serif;
 }
 @media screen and (max-width: 768px) {
   h1 {
