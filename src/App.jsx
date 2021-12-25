@@ -14,6 +14,9 @@ const bundleDropModule = sdk.getBundleDropModule(
 const tokenModule = sdk.getTokenModule(
   "0xb49b207639e900f21c69b54e827ded7ee1709f86"
 );
+const voteModule = sdk.getVoteModule(
+  "0x39A405df644F40C0f79D0CDCC63Cd973f234b9F8",
+);
 
 const App = () => {
   const { connectWallet, address, error, provider } = useWeb3();
@@ -32,6 +35,10 @@ const App = () => {
   const [memberTokenAmounts, setMemberTokenAmounts] = useState({});
   // The array holding all of our members addresses.
   const [memberAddresses, setMemberAddresses] = useState([]);
+  
+  const [proposals, setProposals] = useState([]);
+  const [isVoting, setIsVoting] = useState(false);
+  const [hasVoted, setHasVoted] = useState(false);
 
   // A fancy function to shorten someones wallet address, no need to show the whole thing. 
   const shortenAddress = (str) => {
@@ -120,7 +127,49 @@ const App = () => {
         console.error("failed to nft balance", error);
       });
   }, [address]);
-  
+
+  // Retrieve all our existing proposals from the contract.
+  useEffect(() => {
+    if (!hasClaimedNFT) {
+      return;
+    }
+    // A simple call to voteModule.getAll() to grab the proposals.
+    voteModule
+      .getAll()
+      .then((proposals) => {
+        // Set state!
+        setProposals(proposals);
+        console.log("🌈 Proposals:", proposals)
+      })
+      .catch((err) => {
+        console.error("failed to get proposals", err);
+      });
+  }, [hasClaimedNFT]);
+
+  // We also need to check if the user already voted.
+  useEffect(() => {
+    if (!hasClaimedNFT) {
+      return;
+    }
+
+    // If we haven't finished retrieving the proposals from the useEffect above
+    // then we can't check if the user voted yet!
+    if (!proposals.length) {
+      return;
+    }
+
+    // Check if the user has already voted on the first proposal.
+    voteModule
+      .hasVoted(proposals[0].proposalId, address)
+      .then((hasVoted) => {
+        setHasVoted(hasVoted);
+        console.log("🥵 User has already voted")
+      })
+      .catch((err) => {
+        console.error("failed to check if wallet has voted", err);
+      });
+  }, [hasClaimedNFT, proposals, address]);
+
   // This is the case where the user hasn't connected their wallet
   // to your web app. Let them call connectWallet.
   if (!address) {
